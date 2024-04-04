@@ -16,7 +16,7 @@ public interface TransactionSpi {
     
     List<Transaction> findAll();
     Optional<Transaction> findById(UUID id);
-    Transaction save(TransactionDto transactionDto);
+    Transaction save(Transaction transaction);
     void deleteById(UUID id);
     Transaction findTheLastTransactionByBankAccountId(UUID id);
     

@@ -47,6 +47,19 @@ public class User {
         this.buddysIdList = new ArrayList<>();
     }
     
+    public User(UUID ID, String email, String password, String firstName, String lastName, String role,
+                UUID BANK_ACCOUNT_ID, List<UUID> buddysIdList) {
+        this.ID = ID;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.BANK_ACCOUNT_ID = BANK_ACCOUNT_ID;
+        this.buddysIdList = buddysIdList;
+    }
+    
+    
     public UUID getID() {
         return ID;
     }

@@ -1,5 +1,6 @@
 package com.domain.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,27 +18,27 @@ public class Transaction {
     
     private final UUID ID;
     private final UUID CONNECTION_ID;
-    private final UUID AMOUNT;
+    private final BigDecimal AMOUNT;
     private String description;
-    private final LocalDateTime CREADTED_AT;
+    private final LocalDateTime CREATED_AT;
     private final UUID BANK_ACCOUNT_ID;
     
-    public Transaction(UUID ID, UUID CONNECTION_ID, UUID AMOUNT, String description, LocalDateTime CREADTED_AT,
+    public Transaction(UUID ID, UUID CONNECTION_ID, BigDecimal AMOUNT, String description, LocalDateTime CREATED_AT,
                        UUID BANK_ACCOUNT_ID) {
         this.ID = ID;
         this.CONNECTION_ID = CONNECTION_ID;
         this.AMOUNT = AMOUNT;
         this.description = description;
-        this.CREADTED_AT = CREADTED_AT;
+        this.CREATED_AT = CREATED_AT;
         this.BANK_ACCOUNT_ID = BANK_ACCOUNT_ID;
     }
     
-    public Transaction(UUID CONNECTION_ID, UUID AMOUNT, String description, UUID BANK_ACCOUNT_ID) {
+    public Transaction(UUID CONNECTION_ID, BigDecimal AMOUNT, String description, UUID BANK_ACCOUNT_ID) {
         this.ID = UUID.randomUUID();
         this.CONNECTION_ID = CONNECTION_ID;
         this.AMOUNT = AMOUNT;
         this.description = description;
-        this.CREADTED_AT = LocalDateTime.now();
+        this.CREATED_AT = LocalDateTime.now();
         this.BANK_ACCOUNT_ID = BANK_ACCOUNT_ID;
     }
     
@@ -49,7 +50,7 @@ public class Transaction {
         return CONNECTION_ID;
     }
     
-    public UUID getAMOUNT() {
+    public BigDecimal getAMOUNT() {
         return AMOUNT;
     }
     
@@ -61,8 +62,8 @@ public class Transaction {
         this.description = description;
     }
     
-    public LocalDateTime getCREADTED_AT() {
-        return CREADTED_AT;
+    public LocalDateTime getCREATED_AT() {
+        return CREATED_AT;
     }
     
     public UUID getBANK_ACCOUNT_ID() {
