@@ -1,10 +1,11 @@
 package com.domain.api;
 
+import com.domain.dto.BankAccountId;
 import com.domain.dto.TransactionDto;
+import com.domain.dto.TransactionId;
 import com.domain.entity.Transaction;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Interface to perform requests from controllers to the domain for Transaction entity.
@@ -14,9 +15,14 @@ import java.util.UUID;
 public interface TransactionApi {
     
     List<Transaction> getAll();
-    Transaction getById(UUID uuid);
-    Transaction save(TransactionDto transactionDto);
-    void deleteById(UUID id);
-    Transaction getLastTransactionByBankAccountId(UUID id);
     
+    Transaction getById(TransactionId transactionId);
+    
+    Transaction save(TransactionDto transactionDto);
+    
+    void deleteById(TransactionId transactionId);
+    
+    Transaction getLastTransactionByBankAccountId(BankAccountId bankAccountId);
+    
+    void transaction(TransactionDto transactionDto);
 }

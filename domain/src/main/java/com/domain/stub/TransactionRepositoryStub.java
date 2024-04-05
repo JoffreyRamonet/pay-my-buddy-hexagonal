@@ -1,12 +1,13 @@
 package com.domain.stub;
 
 import com.domain.ddd.Stub;
+import com.domain.dto.BankAccountId;
+import com.domain.dto.TransactionId;
 import com.domain.entity.Transaction;
 import com.domain.spi.TransactionSpi;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A fake class to perform TransactionSpi request.
@@ -27,10 +28,11 @@ public class TransactionRepositoryStub implements TransactionSpi {
     }
     
     @Override
-    public Optional<Transaction> findById(UUID id) {
+    public Optional<Transaction> findById(TransactionId transactionId) {
         Transaction transaction = transactions.stream()
                 .filter(t -> t.getID()
-                        .equals(id))
+                        .transactionId()
+                        .equals(transactionId.transactionId()))
                 .toList()
                 .getFirst();
         return Optional.of(transaction);
@@ -38,11 +40,15 @@ public class TransactionRepositoryStub implements TransactionSpi {
     
     @Override
     public Transaction save(Transaction transaction) {
-        if(transactions.stream().noneMatch(t -> t.getID().equals(transaction.getID()))){
+        if(transactions.stream()
+                .noneMatch(t -> t.getID()
+                        .equals(transaction.getID()))) {
             transactions.add(transaction);
         } else {
-            for(int i = 0; i <= transactions.size() ; i++){
-                if(transactions.get(i).getID().equals(transaction.getID())){
+            for(int i = 0; i <= transactions.size(); i++) {
+                if(transactions.get(i)
+                        .getID()
+                        .equals(transaction.getID())) {
                     transactions.set(i, transaction);
                 }
             }
@@ -52,12 +58,19 @@ public class TransactionRepositoryStub implements TransactionSpi {
     }
     
     @Override
-    public void deleteById(UUID id) {
-    transactions.removeIf(t -> t.getID().equals(id));
+    public void deleteById(TransactionId transactionId) {
+        transactions.removeIf(t -> t.getID()
+                .transactionId()
+                .equals(transactionId.transactionId()));
     }
     
     @Override
-    public Transaction findTheLastTransactionByBankAccountId(UUID id) {
-        return null;
+    public Transaction findTheLastTransactionByBankAccountId(BankAccountId bankAccountId) {
+        return transactions.stream()
+                .filter(t -> t.getBANK_ACCOUNT_ID()
+                        .bankAccountId()
+                        .equals(bankAccountId.bankAccountId()))
+                .toList()
+                .getFirst();
     }
 }

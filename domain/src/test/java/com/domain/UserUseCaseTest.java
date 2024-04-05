@@ -2,11 +2,15 @@ package com.domain;
 
 import com.domain.dto.BuddyDto;
 import com.domain.dto.DeleteBuddy;
+import com.domain.dto.Email;
 import com.domain.dto.PasswordDto;
 import com.domain.dto.UserDto;
+import com.domain.dto.UserId;
 import com.domain.dto.UserModifyDto;
 import com.domain.entity.User;
+import com.domain.stub.BankAccountRepositoryStub;
 import com.domain.stub.UserRepositoryStub;
+import com.domain.use_case.UserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,17 +21,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserUseCaseTest {
     
-    UserRepositoryStub repositoryStub;
+    UserRepositoryStub userRepositoryStub;
+    BankAccountRepositoryStub bankAccountRepositoryStub;
     UserUseCase userUseCase;
+    
     @BeforeEach
-    void setUp(){
-        repositoryStub = new UserRepositoryStub();
-        userUseCase = new UserUseCase(repositoryStub);
+    void setUp() {
+        userRepositoryStub = new UserRepositoryStub();
+        bankAccountRepositoryStub = new BankAccountRepositoryStub();
+        userUseCase = new UserUseCase(userRepositoryStub, bankAccountRepositoryStub);
     }
     
     @Test
-    void shouldGetAllReturnAllUsersTest(){
-        int findAll = repositoryStub.findAll()
+    void shouldGetAllReturnAllUsersTest() {
+        int findAll = userRepositoryStub.findAll()
                 .size();
         List<User> result = userUseCase.getAll();
         
@@ -35,35 +42,41 @@ public class UserUseCaseTest {
     }
     
     @Test
-    void shouldGetByIdReturnUserTest(){
+    void shouldGetByIdReturnUserTest() {
         UUID id = UUID.fromString("37c4d6f5-46e6-4265-a5ae-450425306d0f");
         
-        User result = userUseCase.getById(id);
+        User result = userUseCase.getById(new UserId(id));
         
-        assertEquals("jaboyd@email.com", result.getEmail());
+        assertEquals("jaboyd@email.com", result.getEmail()
+                .email());
     }
     
     @Test
-    void shouldGetByEmailReturnUserTest(){
-        String email = "jaboyd@email.com";
+    void shouldGetByEmailReturnUserTest() {
+        Email email = new Email("jaboyd@email.com");
         
         User result = userUseCase.getByEmail(email);
         
-        assertEquals("37c4d6f5-46e6-4265-a5ae-450425306d0f", result.getID().toString());
+        assertEquals("37c4d6f5-46e6-4265-a5ae-450425306d0f", result.getUSER_ID()
+                .userId()
+                .toString());
     }
     
     @Test
-    void shouldSaveUserByUserDtoTest(){
-        UserDto userDto = new UserDto("drk@email.com", "drk@email.com", "newPass", "newPass", "Jonanathan", "Marrack");
+    void shouldSaveUserByUserDtoTest() {
+        Email email = new Email("drk@email.com");
+        UserDto userDto = new UserDto(email, email, "newPass", "newPass", "Jonanathan", "Marrack");
         
         User result = userUseCase.save(userDto);
         
-        assertEquals("drk@email.com", result.getEmail());
+        assertEquals("drk@email.com", result.getEmail()
+                .email());
     }
     
     @Test
-    void shouldSaveByUserModifyDtoWhenOnlyFirstNameIsUpdatedTest(){
-        UserModifyDto userModifyDto = new UserModifyDto(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002"), "newName", "");
+    void shouldSaveByUserModifyDtoWhenOnlyFirstNameIsUpdatedTest() {
+        UserModifyDto userModifyDto =
+                new UserModifyDto(new UserId(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002")), "newName", "");
         
         User result = userUseCase.save(userModifyDto);
         
@@ -71,28 +84,34 @@ public class UserUseCaseTest {
     }
     
     @Test
-    void shouldSaveByUserModifyDtoWhenOnlyLastNameIsUpdatedTest(){
-        UserModifyDto userModifyDto = new UserModifyDto(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002"), "", "newLastName");
+    void shouldSaveByUserModifyDtoWhenOnlyLastNameIsUpdatedTest() {
+        UserModifyDto userModifyDto =
+                new UserModifyDto(new UserId(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002")), "",
+                        "newLastName");
         
         User result = userUseCase.save(userModifyDto);
         
-        assertEquals("newLastName", result.getFirstName());
+        assertEquals("newLastName", result.getLastName());
     }
     
     @Test
-    void shouldDeleteUserTest(){
-        int beforeDelete = repositoryStub.findAll().size();
+    void shouldDeleteUserTest() {
+        int beforeDelete = userRepositoryStub.findAll()
+                .size();
         
-        userUseCase.deleteAuthenticatedUser(UUID.fromString( "866aad44-6b52-43be-95f3-9f26ccdea918"));
-       
-        int afterDelete = repositoryStub.findAll().size();
+        userUseCase.deleteAuthenticatedUser(new UserId(UUID.fromString("866aad44-6b52-43be-95f3-9f26ccdea918")));
+        
+        int afterDelete = userRepositoryStub.findAll()
+                .size();
         
         assertEquals(afterDelete, beforeDelete - 1);
     }
     
     @Test
-    void shouldSaveNewPasswordByPasswordDtoTest(){
-        PasswordDto passwordDto = new PasswordDto(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002"), "Password", "newPass", "newPass");
+    void shouldSaveNewPasswordByPasswordDtoTest() {
+        PasswordDto passwordDto =
+                new PasswordDto(new UserId(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002")), "Password",
+                        "newPass", "newPass");
         
         User result = userUseCase.save(passwordDto);
         
@@ -100,35 +119,47 @@ public class UserUseCaseTest {
     }
     
     @Test
-    void shouldSaveNewBuddyTest(){
-        BuddyDto buddyDto = new BuddyDto(UUID.fromString("677218cd-a42c-4885-95a9-bb9d5006fc17"), "jaboyd@email.com");
+    void shouldSaveNewBuddyTest() {
+        UserId userId = new UserId(UUID.fromString("677218cd-a42c-4885-95a9-bb9d5006fc17"));
+        BuddyDto buddyDto = new BuddyDto(userId, new Email("jaboyd@email.com"));
         
-        int beforeUpdate = repositoryStub.findByEmail("jaboyd@email.com").get().getBuddysIdList().size();
-        User result = userUseCase.saveNewBuddy(buddyDto);
-        int afterUpdate = repositoryStub.findByEmail("jaboyd@email.com").get().getBuddysIdList().size();
-       
-        assertEquals(afterUpdate, beforeUpdate + 1);
+        int beforeUpdate = userRepositoryStub.findById(userId)
+                .get()
+                .getBuddysIdList()
+                .size();
+        userUseCase.saveNewBuddy(buddyDto);
+        int afterUpdate = userRepositoryStub.findById(userId)
+                .get()
+                .getBuddysIdList()
+                .size();
+        
+        assertEquals(beforeUpdate + 1, afterUpdate);
     }
     
     @Test
-    void shouldReturnAllBuddyTest(){
-        List<User> result = userUseCase.getAllBuddy(UUID.fromString("37c4d6f5-46e6-4265-a5ae-450425306d0f"));
+    void shouldReturnAllBuddyTest() {
+        List<User> result =
+                userUseCase.getAllBuddy(new UserId(UUID.fromString("37c4d6f5-46e6-4265-a5ae-450425306d0f")));
         
         assertEquals(2, result.size());
     }
     
     @Test
-    void shouldDeleteABuddyTest(){
-        DeleteBuddy deleteBuddy = new DeleteBuddy(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002"), UUID.fromString("37c4d6f5-46e6-4265-a5ae-450425306d0f"));
-        int beforeDelete = repositoryStub.findById(deleteBuddy.user()).get().getBuddysIdList().size();
+    void shouldDeleteABuddyTest() {
+        DeleteBuddy deleteBuddy = new DeleteBuddy(new UserId(UUID.fromString("28c3aa49-6b74-4dd6-aadb-6df300cfc002")),
+                new UserId(UUID.fromString("37c4d6f5-46e6-4265-a5ae-450425306d0f")));
+        int beforeDelete = userRepositoryStub.findById(deleteBuddy.userId())
+                .get()
+                .getBuddysIdList()
+                .size();
         
         userUseCase.deleteBuddy(deleteBuddy);
         
-        int afterDelete = repositoryStub.findById(deleteBuddy.user()).get().getBuddysIdList().size();
+        int afterDelete = userRepositoryStub.findById(deleteBuddy.userId())
+                .get()
+                .getBuddysIdList()
+                .size();
         
-        assertEquals(afterDelete, beforeDelete -1);
+        assertEquals(afterDelete, beforeDelete - 1);
     }
-    
-    
-
 }

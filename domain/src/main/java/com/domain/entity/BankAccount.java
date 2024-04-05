@@ -1,5 +1,7 @@
 package com.domain.entity;
 
+import com.domain.dto.BankAccountId;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +16,14 @@ import java.util.UUID;
  */
 public class BankAccount {
     
-    private final UUID ID;
+    private final BankAccountId bankAccountId;
     private BigDecimal balance;
     private final UUID IBAN;
     private final UUID SWIFT;
     private List<UUID> transactions;
     
-    public BankAccount(UUID ID, BigDecimal balance, UUID IBAN, UUID SWIFT, List<UUID> transactions) {
-        this.ID = ID;
+    public BankAccount(BankAccountId ID, BigDecimal balance, UUID IBAN, UUID SWIFT, List<UUID> transactions) {
+        this.bankAccountId = ID;
         this.balance = balance;
         this.IBAN = IBAN;
         this.SWIFT = SWIFT;
@@ -29,7 +31,7 @@ public class BankAccount {
     }
     
     public BankAccount() {
-        this.ID = UUID.randomUUID();
+        this.bankAccountId = new BankAccountId(UUID.randomUUID());
         this.balance = new BigDecimal("0.00");
         this.IBAN = UUID.randomUUID();
         this.SWIFT = UUID.randomUUID();
@@ -37,8 +39,8 @@ public class BankAccount {
     }
     
     
-    public UUID getID() {
-        return ID;
+    public BankAccountId getBankAccountId() {
+        return bankAccountId;
     }
     
     public BigDecimal getBalance() {

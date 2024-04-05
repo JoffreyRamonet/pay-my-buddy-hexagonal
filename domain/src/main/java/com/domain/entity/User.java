@@ -1,5 +1,8 @@
 package com.domain.entity;
 
+import com.domain.dto.Email;
+import com.domain.dto.UserId;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,8 +18,8 @@ import java.util.UUID;
  */
 public class User {
     
-    private final UUID ID;
-    private String email;
+    private final UserId USER_ID;
+    private Email email;
     private String password;
     private String firstName;
     private String lastName;
@@ -24,9 +27,9 @@ public class User {
     private final UUID BANK_ACCOUNT_ID;
     private List<UUID> buddysIdList;
     
-    public User(UUID id, String email, String password, String firstName, String lastName,
-                UUID bankAccountId, List<UUID> buddysIdList) {
-        this.ID = id;
+    public User(UserId USER_ID, Email email, String password, String firstName, String lastName, UUID bankAccountId,
+                List<UUID> buddysIdList) {
+        this.USER_ID = USER_ID;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -36,8 +39,8 @@ public class User {
         this.buddysIdList = buddysIdList;
     }
     
-    public User(String email, String password, String firstName, String lastName, UUID bankAccountId) {
-        this.ID = UUID.randomUUID();
+    public User(Email email, String password, String firstName, String lastName, UUID bankAccountId) {
+        this.USER_ID = new UserId(UUID.randomUUID());
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -47,9 +50,9 @@ public class User {
         this.buddysIdList = new ArrayList<>();
     }
     
-    public User(UUID ID, String email, String password, String firstName, String lastName, String role,
+    public User(UserId USER_ID, Email email, String password, String firstName, String lastName, String role,
                 UUID BANK_ACCOUNT_ID, List<UUID> buddysIdList) {
-        this.ID = ID;
+        this.USER_ID = USER_ID;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -60,15 +63,15 @@ public class User {
     }
     
     
-    public UUID getID() {
-        return ID;
+    public UserId getUSER_ID() {
+        return USER_ID;
     }
     
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
     
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
     

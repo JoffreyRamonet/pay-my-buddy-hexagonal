@@ -1,11 +1,11 @@
 package com.domain.spi;
 
-import com.domain.dto.TransactionDto;
+import com.domain.dto.BankAccountId;
+import com.domain.dto.TransactionId;
 import com.domain.entity.Transaction;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Interface to perform requests to the client in the infrastructure layer from the domain for Transaction entity.
@@ -15,9 +15,12 @@ import java.util.UUID;
 public interface TransactionSpi {
     
     List<Transaction> findAll();
-    Optional<Transaction> findById(UUID id);
-    Transaction save(Transaction transaction);
-    void deleteById(UUID id);
-    Transaction findTheLastTransactionByBankAccountId(UUID id);
     
+    Optional<Transaction> findById(TransactionId transactionId);
+    
+    Transaction save(Transaction transaction);
+    
+    void deleteById(TransactionId transactionId);
+    
+    Transaction findTheLastTransactionByBankAccountId(BankAccountId bankAccountId);
 }
