@@ -1,6 +1,4 @@
 package com.domain.dto;
 
-import java.util.UUID;
-
-public record DeleteBuddy(UUID user,UUID buddy) {
+public record DeleteBuddy(UserId userId, UserId buddyId) {
 }

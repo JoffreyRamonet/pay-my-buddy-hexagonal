@@ -1,12 +1,12 @@
 package com.domain.stub;
 
 import com.domain.ddd.Stub;
+import com.domain.dto.BankAccountId;
 import com.domain.entity.BankAccount;
 import com.domain.spi.BankAccountSpi;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A fake class to perform BankAccountSpi request.
@@ -27,10 +27,11 @@ public class BankAccountRepositoryStub implements BankAccountSpi {
     }
     
     @Override
-    public Optional<BankAccount> findById(UUID id) {
+    public Optional<BankAccount> findById(BankAccountId bankAccountId) {
         BankAccount bankAccount = bankAccounts.stream()
-                .filter(b -> b.getID()
-                        .equals(id))
+                .filter(b -> b.getBankAccountId()
+                        .bankAccountId()
+                        .equals(bankAccountId.bankAccountId()))
                 .toList()
                 .getFirst();
         return Optional.of(bankAccount);
@@ -39,14 +40,14 @@ public class BankAccountRepositoryStub implements BankAccountSpi {
     @Override
     public BankAccount save(BankAccount bankAccount) {
         if(bankAccounts.stream()
-                .noneMatch(b -> b.getID()
-                        .equals(bankAccount.getID()))) {
+                .noneMatch(b -> b.getBankAccountId()
+                        .equals(bankAccount.getBankAccountId()))) {
             bankAccounts.add(bankAccount);
         } else {
-            for(int i = 0; i <= bankAccounts.size(); i++) {
+            for(int i = 0; i <= bankAccounts.size() - 1; i++) {
                 if(bankAccounts.get(i)
-                        .getID()
-                        .equals(bankAccount.getID())) {
+                        .getBankAccountId()
+                        .equals(bankAccount.getBankAccountId())) {
                     bankAccounts.set(i, bankAccount);
                 }
             }
@@ -55,8 +56,9 @@ public class BankAccountRepositoryStub implements BankAccountSpi {
     }
     
     @Override
-    public void deleteById(UUID id) {
-        bankAccounts.removeIf(b -> b.getID()
-                .equals(id));
+    public void deleteById(BankAccountId bankAccountId) {
+        bankAccounts.removeIf(b -> b.getBankAccountId()
+                .bankAccountId()
+                .equals(bankAccountId.bankAccountId()));
     }
 }

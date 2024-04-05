@@ -1,12 +1,13 @@
 package com.domain.stub;
 
 import com.domain.ddd.Stub;
+import com.domain.dto.Email;
+import com.domain.dto.UserId;
 import com.domain.entity.User;
 import com.domain.spi.UserSpi;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A fake class to perform UserSpi request.
@@ -17,7 +18,6 @@ import java.util.UUID;
  */
 @Stub
 public class UserRepositoryStub implements UserSpi {
-    
     private final DataBaseStub data = new DataBaseStub();
     private final List<User> users = data.users();
     
@@ -27,42 +27,49 @@ public class UserRepositoryStub implements UserSpi {
     }
     
     @Override
-    public Optional<User> findById(UUID id) {
+    public Optional<User> findById(UserId userId) {
         User user = users.stream()
-                .filter(u -> u.getID()
-                        .equals(id))
+                .filter(u -> u.getUSER_ID()
+                        .userId()
+                        .equals(userId.userId()))
                 .toList()
                 .getFirst();
         return Optional.of(user);
     }
     
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> findByEmail(Email email) {
         User user = users.stream()
                 .filter(u -> u.getEmail()
-                        .equals(email))
+                        .email()
+                        .equals(email.email()))
                 .toList()
                 .getFirst();
         return Optional.of(user);
     }
     
     @Override
-    public void deleteById(UUID id) {
-    users.removeIf(u -> u.getID().equals(id));
+    public void deleteById(UserId userId) {
+        users.removeIf(u -> u.getUSER_ID()
+                .userId()
+                .equals(userId.userId()));
     }
     
     @Override
     public User save(User user) {
-       if(users.stream()
-                .noneMatch(u -> u.getID().equals(user.getID()))){
-           users.add(user);
-       } else {
-           for(int i = 0; i <= users.size(); i++){
-               if(users.get(i).getID().equals(user.getID())){
-                   users.set(i, user);
-               }
-           }
-       }
+        if(users.stream()
+                .noneMatch(u -> u.getUSER_ID()
+                        .equals(user.getUSER_ID()))) {
+            users.add(user);
+        } else {
+            for(int i = 0; i <= users.size() - 1; i++) {
+                if(users.get(i)
+                        .getUSER_ID()
+                        .equals(user.getUSER_ID())) {
+                    users.set(i, user);
+                }
+            }
+        }
         return user;
     }
 }
